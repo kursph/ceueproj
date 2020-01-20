@@ -9,12 +9,10 @@
     <h1>Kunden anlegen:</h1>
 
     <!-- bestimmt die Zieladresse der Parameter -->
-    <form th:action="@{/lenker}" method="get">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
-        <label for="nname">Nachname:</label>
-        <input type="text" id="nname" name="nname">
-        <input type="submit">
+    <form action="/kunde" method="POST">
+        <input type="text" name="vorname" placeholder="vorname">
+        <input type="text" name="nachname" placeholder="nachname">
+        <input type="submit" value="Abschicken!">
     </form>
 </body>
 </html>
