@@ -2,6 +2,13 @@ package com.ceue.rest.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Klasse für Bestellungen, erstellt eine Bestellung und verwaltet die einzelnen Komponenten
  */
@@ -92,5 +99,39 @@ public class Bestellung {
     @Override
     public String toString() {
         return this.lenkertyp + ", " + this.material + ", " + this.schaltung + ", " + this.griff;
+    }
+
+    /**
+     * Methode um die Bestellung an das ERP abzuschicken
+     * @throws IOException
+     */
+    public boolean bestellungSenden() throws IOException{
+        URL object = new URL("https://www.maripavi.at/bestellung");
+        HttpURLConnection con = (HttpURLConnection) object.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        String POST_PARAMS = "griff="+lenkertyp+"&lenkertyp="+lenkertyp+"&material="+material+"&schaltung="+schaltung;
+        con.setDoOutput(true);
+        OutputStream os = con.getOutputStream();
+        os.write(POST_PARAMS.getBytes());
+        os.flush();
+        os.close();
+        int responseCode = con.getResponseCode();
+        if(responseCode==201){
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    con.getInputStream()
+            ));
+            String lineInput;
+            StringBuffer sb = new StringBuffer();
+            while((lineInput = in.readLine()) != null){
+                sb.append(lineInput);
+            }
+            in.close();
+            System.out.println("POST erfolgreich");
+            return true;
+        }else{
+            System.out.println("POST nicht erfolgreich");
+            return false;
+        }
     }
 }

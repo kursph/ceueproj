@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -148,5 +149,20 @@ public class LenkerController {
         model.addAttribute("bestellung", bestellung);
 
         return "bestellung";
+    }
+
+    @PostMapping(path="/send", produces = "application/json")
+    public String sendBestellung(){
+        boolean b=false;
+        try {
+            b=bestellung.bestellungSenden();
+        }catch (IOException e){
+            e.printStackTrace();
+            return "bestellung";
+        }
+        if(b)
+            return "bestellungMsg";
+        else
+            return "bestellung";
     }
 }
