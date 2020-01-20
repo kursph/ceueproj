@@ -22,6 +22,8 @@ public class Bestellung {
     private Material material;
     //Schaltung aus dem ERP
     private Schaltung schaltung;
+    //Response vom POST
+    private String response;
 
     /**
      * parameterloser Konstruktor
@@ -92,6 +94,10 @@ public class Bestellung {
         return this.schaltung;
     }
 
+    public String getResponse() {
+        return this.response;
+    }
+
     /**
      * Gibt die gesamte Bestellung als String aus
      * @return die zusammengestellte Bestellung
@@ -110,13 +116,14 @@ public class Bestellung {
         HttpURLConnection con = (HttpURLConnection) object.openConnection();
         con.setRequestMethod("POST");
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
-        String POST_PARAMS = "griff="+lenkertyp+"&lenkertyp="+lenkertyp+"&material="+material+"&schaltung="+schaltung;
+        String POST_PARAMS = "griff=" + this.griff + "&lenkertyp=" + this.lenkertyp + "&material=" + this.material + "&schaltung=" + this.schaltung;
         con.setDoOutput(true);
         OutputStream os = con.getOutputStream();
         os.write(POST_PARAMS.getBytes());
         os.flush();
         os.close();
         int responseCode = con.getResponseCode();
+        this.response = con.getResponseMessage();
         if(responseCode==201){
             BufferedReader in = new BufferedReader(new InputStreamReader(
                     con.getInputStream()

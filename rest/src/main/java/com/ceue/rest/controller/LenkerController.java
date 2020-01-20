@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.function.EntityResponse;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -134,35 +135,23 @@ public class LenkerController {
         model.addAttribute("griffe", Arrays.asList(griffe));
         return "griffe";
     }
-    /**
-     * erstellt eine neue Bestellung für das ERP
-     * @param model Model entsprechend Spring Boot MVC
-     * @param griffe übergebener Parameter
-     * @return Zieladresse
-     */
-    @GetMapping(path = "/bestellung", produces = "application/json")
-    public String addBestellung(@RequestParam(name = "griffe") String griffe, Model model) {
-        String url = "https://www.maripavi.at/produkt/bestellung";
 
+    @GetMapping(path = "/bestellung")
+    public String sendBestellung(@RequestParam(name = "griffe") String griffe, Model model) {
+        boolean b = false;
         Griff griff = new Griff(griffe);
         bestellung.setGriff(griff);
-        model.addAttribute("bestellung", bestellung);
 
-        return "bestellung";
-    }
-
-    @PostMapping(path="/send", produces = "application/json")
-    public String sendBestellung(){
-        boolean b=false;
         try {
-            b=bestellung.bestellungSenden();
+            b = bestellung.bestellungSenden();
         }catch (IOException e){
             e.printStackTrace();
             return "bestellung";
         }
-        if(b)
+        if(b) {
+            model.addAttribute("response", bestellung.getResponse());
             return "bestellungMsg";
-        else
+        } else
             return "bestellung";
     }
 }
