@@ -149,7 +149,7 @@ public class LenkerController {
             return "bestellung";
         }
         if(b) {
-            model.addAttribute("response", bestellung.getResponse());
+            model.addAttribute("response", bestellung.toString());
             return "bestellungMsg";
         } else
             return "bestellung";
